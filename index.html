@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>7-Eleven NPS Score</title>
+<style>
+  :root {
+    --seven-green: #00703c;
+    --seven-orange: #ff8c00;
+    --promoter: #28a745;
+    --passive: #ffc107;
+    --detractor: #dc3545;
+    --passive-text: #b08800;
+    --text-dark: #333;
+    --text-muted: #666;
+    --text-subtle: #888;
+    --border: #e0e0e0;
+    --divider: #eee;
+    --panel: #f8f9fa;
+    --bg: transparent;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 Helvetica, Arial, sans-serif, "Apple Color Emoji",
+                 "Segoe UI Emoji", "Segoe UI Symbol";
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+  .nps-widget-container {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    padding: 22px;
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  .nps-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--divider);
+  }
+  .nps-header img {
+    height: 40px;
+    width: auto;
+    flex-shrink: 0;
+  }
+  .nps-header .header-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .nps-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .nps-header .location {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-top: 2px;
+    word-break: break-word;
+  }
+  .nps-score-display {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .nps-score-display .score-label {
+    font-size: 0.95em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .nps-score-display .score {
+    font-size: 3.25em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--seven-green);
+  }
+  .nps-score-display .response-count {
+    font-size: 0.8em;
+    color: var(--text-subtle);
+    margin-top: 6px;
+  }
+  .nps-breakdown { margin-bottom: 22px; }
+  .breakdown-bar {
+    display: flex;
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .bar-promoter  { background-color: var(--promoter); }
+  .bar-passive   { background-color: var(--passive); }
+  .bar-detractor { background-color: var(--detractor); }
+  .breakdown-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    justify-content: space-between;
+    font-size: 0.78em;
+    color: var(--text-muted);
+  }
+  .breakdown-labels div {
+    display: flex;
+    align-items: center;
+  }
+  .label-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    flex-shrink: 0;
+  }
+  .area-ranking {
+    text-align: center;
+    padding: 14px;
+    background-color: var(--panel);
+    border-radius: 8px;
+  }
+  .area-ranking .rank-label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .area-ranking .rank-value {
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text-dark);
+  }
+  .area-ranking .rank-value span {
+    font-weight: 700;
+    color: var(--seven-orange);
+  }
+  .nps-legend {
+    margin-top: 18px;
+    padding-top: 14px;
+    font-size: 0.72em;
+    color: var(--text-subtle);
+    text-align: center;
+    border-top: 1px solid var(--divider);
+    line-height: 1.6;
+  }
+  .nps-legend span { margin: 0 4px; }
+  .legend-detractor { color: var(--detractor); font-weight: 600; }
+  .legend-passive   { color: var(--passive-text); font-weight: 600; }
+  .legend-promoter  { color: var(--promoter); font-weight: 600; }
+  @media (max-width: 380px) {
+    .nps-widget-container { padding: 16px; border-radius: 10px; }
+    .nps-header h2 { font-size: 1.1em; }
+    .nps-score-display .score { font-size: 2.75em; }
+    .breakdown-labels { font-size: 0.72em; }
+  }
+</style>
+</head>
+<body>
+  <!--
+    7-Eleven Australia - NPS Score Widget
+    Dynamic variable: {{externalLocationId}} is replaced at runtime by WorkJam
+    with the current user's store identifier.
+  -->
+  <div class="nps-widget-container" role="region" aria-label="Net Promoter Score">
+    <div class="nps-header">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/e/e0/7-Eleven_logo_2021.svg"
+        alt="7-Eleven Australia Logo">
+      <div class="header-text">
+        <h2>Net Promoter Score</h2>
+        <div class="location">Store ID: {{externalLocationId}}</div>
+      </div>
+    </div>
+
+    <div class="nps-score-display">
+      <div class="score-label">Current NPS</div>
+      <div class="score">45</div>
+      <div class="response-count">Based on 250 responses this month</div>
+    </div>
+
+    <div class="nps-breakdown">
+      <div class="breakdown-bar" role="img" aria-label="NPS breakdown: 60% promoters, 25% passives, 15% detractors">
+        <div class="bar-promoter"  style="width: 60%;"></div>
+        <div class="bar-passive"   style="width: 25%;"></div>
+        <div class="bar-detractor" style="width: 15%;"></div>
+      </div>
+      <div class="breakdown-labels">
+        <div><span class="label-dot" style="background-color: #28a745;"></span>Promoters (60%)</div>
+        <div><span class="label-dot" style="background-color: #ffc107;"></span>Passives (25%)</div>
+        <div><span class="label-dot" style="background-color: #dc3545;"></span>Detractors (15%)</div>
+      </div>
+    </div>
+
+    <div class="area-ranking">
+      <div class="rank-label">Ranking vs. Local Stores</div>
+      <div class="rank-value"><span>#3</span> out of 15</div>
+    </div>
+
+    <div class="nps-legend">
+      NPS Scoring:
+      <span class="legend-detractor">0-6 Detractor</span> |
+      <span class="legend-passive">7-8 Passive</span> |
+      <span class="legend-promoter">9-10 Promoter</span>
+    </div>
+  </div>
+</body>
+</html>
