@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HDS × 7-Eleven | Spencer Street · Items in Transit</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    /* ── Tokens ── */
+    :root {
+      --bg-primary:    #ffffff;
+      --bg-secondary:  #f4f5f7;
+      --text-primary:  #111827;
+      --text-secondary:#6b7280;
+      --border:        #e5e7eb;
+      --blue:          #2F71F3;
+      --green:         #22c55e;
+      --amber:         #f59e0b;
+      --navy:          #1B2B4B;
+      --road-bg:       #0f1e38;
+      --radius-lg:     12px;
+      --radius-md:     8px;
+    }
+
+    .w {
+      width: 100%;
+      max-width: 520px;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--bg-primary);
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--navy);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .hds-logo { height: 26px; width: auto; flex-shrink: 0; }
+    .seven-logo { height: 34px; width: auto; flex-shrink: 0; }
+
+    /* ── Animated road ── */
+    .road-wrap { flex: 1; overflow: hidden; }
+    .road {
+      height: 24px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      background: var(--road-bg);
+    }
+    .road-line {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 2px;
+      width: 100%;
+    }
+    .dash {
+      position: absolute;
+      top: 0;
+      height: 2px;
+      width: 16px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 1px;
+      animation: dash 2.4s linear infinite;
+    }
+    @keyframes dash { 0%{left:-16px} 100%{left:100%} }
+
+    .truck {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: drive 5.5s linear infinite;
+    }
+    @keyframes drive {
+      0%   { left: -36px; opacity: 0; }
+      6%   { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { left: calc(100% + 36px); opacity: 0; }
+    }
+
+    /* ── Body ── */
+    .body { padding: 20px; }
+
+    .live-row { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+    .live-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: blink 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .live-label {
+      font-size: 11px; font-weight: 500;
+      color: var(--blue);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .store-label {
+      font-size: 12px; font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+    .store-name {
+      font-size: 17px; font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .store-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      animation: blink 2s ease-in-out infinite;
+    }
+
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .stat {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .stat-label  { font-size: 11px; color: var(--text-secondary); margin-bottom: 6px; }
+    .stat-val    { font-size: 26px; font-weight: 500; color: var(--text-primary); line-height: 1; }
+    .stat-unit   { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+
+    .divider { height: 0.5px; background: var(--border); margin: 0 0 16px; }
+
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .meta { text-align: center; }
+    .meta-val   { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+    .meta-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+    /* ── Footer ── */
+    .footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      border-top: 0.5px solid var(--border);
+      background: var(--bg-secondary);
+    }
+    .footer-txt { font-size: 11px; color: var(--text-secondary); }
+
+    /* ── Colours ── */
+    .green { color: var(--green); font-weight: 500; }
+    .amber { color: var(--amber); font-weight: 500; }
+  </style>
+</head>
+<body>
+
+<div class="w">
+
+  <!-- ── Header ── -->
+  <div class="header">
+
+    <!-- HDS logo (base64 SVG) -->
+    <img class="hds-logo" alt="HDS"
+      src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgNjAiIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiPgogIDx0ZXh0IHg9IjEwIiB5PSI0NiIgZm9udC1mYW1pbHk9IkFyaWFsIEJsYWNrLCBBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC13ZWlnaHQ9IjkwMCIgZm9udC1zaXplPSI1MiIgZmlsbD0id2hpdGUiIGxldHRlci1zcGFjaW5nPSIyIj5IRFM8L3RleHQ+Cjwvc3ZnPgo="/>
+
+    <!-- Animated truck road -->
+    <div class="road-wrap">
+      <div class="road">
+        <div class="road-line">
+          <div class="dash"></div>
+          <div class="dash" style="animation-delay:-0.8s"></div>
+          <div class="dash" style="animation-delay:-1.6s"></div>
+        </div>
+        <!-- Truck 1 -->
+        <svg class="truck" width="30" height="17" viewBox="0 0 60 30" fill="none" style="animation-delay:0s">
+          <rect x="16" y="4" width="36" height="18" rx="2" fill="#2F71F3"/>
+          <rect x="2" y="11" width="16" height="11" rx="2" fill="#3A62C9"/>
+          <rect x="4" y="13" width="9" height="7" rx="1" fill="#B5D4F4"/>
+          <circle cx="11" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="40" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="50" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <rect x="49" y="13" width="7" height="5" rx="1" fill="#F59E0B" opacity="0.9"/>
+          <circle cx="1" cy="16" r="2" fill="rgba(255,255,255,0.12)"/>
+        </svg>
+        <!-- Truck 2 -->
+        <svg class="truck" width="30" height="17" viewBox="0 0 60 30" fill="none" style="animation-delay:-1.85s">
+          <rect x="16" y="4" width="36" height="18" rx="2" fill="#2F71F3"/>
+          <rect x="2" y="11" width="16" height="11" rx="2" fill="#3A62C9"/>
+          <rect x="4" y="13" width="9" height="7" rx="1" fill="#B5D4F4"/>
+          <circle cx="11" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="40" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="50" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <rect x="49" y="13" width="7" height="5" rx="1" fill="#F59E0B" opacity="0.9"/>
+          <circle cx="1" cy="16" r="2" fill="rgba(255,255,255,0.12)"/>
+        </svg>
+        <!-- Truck 3 -->
+        <svg class="truck" width="30" height="17" viewBox="0 0 60 30" fill="none" style="animation-delay:-3.7s">
+          <rect x="16" y="4" width="36" height="18" rx="2" fill="#2F71F3"/>
+          <rect x="2" y="11" width="16" height="11" rx="2" fill="#3A62C9"/>
+          <rect x="4" y="13" width="9" height="7" rx="1" fill="#B5D4F4"/>
+          <circle cx="11" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="40" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <circle cx="50" cy="27" r="3.5" fill="#111" stroke="#888" stroke-width="1.5"/>
+          <rect x="49" y="13" width="7" height="5" rx="1" fill="#F59E0B" opacity="0.9"/>
+          <circle cx="1" cy="16" r="2" fill="rgba(255,255,255,0.12)"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- 7-Eleven logo (base64 PNG) -->
+    <img class="seven-logo" alt="7-Eleven"
+      src="data:image/png;base64,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"/>
+
+  </div><!-- /.header -->
+
+  <!-- ── Body ── -->
+  <div class="body">
+    <div class="live-row">
+      <div class="live-dot"></div>
+      <div class="live-label">Live · Items on the way</div>
+    </div>
+
+    <div class="store-label">Delivering to</div>
+    <div class="store-name">
+      <span class="store-dot"></span>
+      7-Eleven Spencer Street
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Items in transit</div>
+        <div class="stat-val" id="items">—</div>
+        <div class="stat-unit">items en route</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Estimated delivery time</div>
+        <div class="stat-val" id="edt">—</div>
+        <div class="stat-unit" id="edt-sub">calculating...</div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="meta-grid">
+      <div class="meta">
+        <div class="meta-val green">99.25%</div>
+        <div class="meta-label">DIFOT rate</div>
+      </div>
+      <div class="meta">
+        <div class="meta-val" id="today-items">—</div>
+        <div class="meta-label">Items today</div>
+      </div>
+      <div class="meta">
+        <div class="meta-val" id="today-kms">—</div>
+        <div class="meta-label">km today</div>
+      </div>
+    </div>
+  </div><!-- /.body -->
+
+  <!-- ── Footer ── -->
+  <div class="footer">
+    <div class="footer-txt">Powered by <strong>HDS</strong> cold chain logistics</div>
+    <div class="footer-txt" id="updated">—</div>
+  </div>
+
+</div><!-- /.w -->
+
+<script>
+  function fmt(n) { return Math.floor(n).toLocaleString('en-AU'); }
+
+  // Replace storeItems with a live API value for production
+  const STORE_SEED = 47;
+  const storeItems = 18 + (STORE_SEED % 22);
+
+  function getEDT() {
+    const now = new Date();
+    const hr  = now.getHours();
+    const min = now.getMinutes();
+    if (hr >= 5 && hr < 12) {
+      const eta = new Date(now);
+      eta.setHours(hr < 9 ? 9 : hr + 1, min > 30 ? 0 : 30, 0);
+      return { val: eta.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit'}), sub: 'Morning run · on time', cls: 'stat-val green' };
+    } else if (hr >= 12 && hr < 17) {
+      const eta = new Date(now);
+      eta.setHours(hr + 1, min > 30 ? 0 : 30, 0);
+      return { val: eta.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit'}), sub: 'Afternoon run · on time', cls: 'stat-val green' };
+    } else if (hr >= 17 && hr < 21) {
+      const eta = new Date(now);
+      eta.setHours(hr + 1, min > 30 ? 0 : 30, 0);
+      return { val: eta.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit'}), sub: 'Evening run · on time', cls: 'stat-val green' };
+    } else {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(7, 0, 0, 0);
+      return { val: tomorrow.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit'}), sub: 'Next run · tomorrow am', cls: 'stat-val amber' };
+    }
+  }
+
+  function tick() {
+    const now      = new Date();
+    const startDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const secsDay  = (now - startDay) / 1000;
+
+    document.getElementById('items').textContent       = storeItems;
+    document.getElementById('today-items').textContent = fmt(secsDay * 0.223);
+    document.getElementById('today-kms').textContent   = fmt(secsDay * 0.476);
+
+    const edt  = getEDT();
+    const edtEl = document.getElementById('edt');
+    edtEl.textContent = edt.val;
+    edtEl.className   = edt.cls;
+    document.getElementById('edt-sub').textContent  = edt.sub;
+    document.getElementById('updated').textContent  =
+      'Updated ' + now.toLocaleTimeString('en-AU', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
