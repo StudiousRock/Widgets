@@ -343,8 +343,8 @@
 <script>
   // ── URL parameters ───────────────────────────────────────────────────────
   const params     = new URLSearchParams(window.location.search);
-  const locationId = params.get('externalLocationId') ?? 'South Yarra';
-  const address    = params.get('address')            ?? '627 Chapel St, South Yarra VIC 3141';
+  const locationId = params.get('externalLocationId') ?? 'Brunswick';
+  const address    = params.get('address')            ?? '115 Nicholson Street, Brunswick VIC 3056';
 
   // ── Store name ───────────────────────────────────────────────────────────
   document.getElementById('store-name').textContent = '7-Eleven ' + locationId;
